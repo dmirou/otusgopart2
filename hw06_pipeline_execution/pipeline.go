@@ -62,12 +62,6 @@ func runStage(in In, done In, st Stage) Out {
 				out <- v
 			default:
 			}
-
-			select {
-			case <-done:
-				return
-			default:
-			}
 		}
 	}()
 
