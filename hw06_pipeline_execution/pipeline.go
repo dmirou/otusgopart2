@@ -8,6 +8,7 @@ type (
 
 type Stage func(in In) (out Out)
 
+// ExecutePipeline executes stages as a pipeline.
 func ExecutePipeline(in In, done In, stages ...Stage) Out {
 	if len(stages) == 0 {
 		out := make(Bi)
