@@ -13,7 +13,27 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 	if len(stages) == 0 {
 		out := make(Bi)
 
-		close(out)
+		go func() {
+			defer close(out)
+
+			for {
+				select {
+				case <-done:
+					return
+				default:
+				}
+
+				select {
+				case v, ok := <-in:
+					if !ok {
+						return
+					}
+					out <- v
+				case <-done:
+					return
+				}
+			}
+		}()
 
 		return out
 	}

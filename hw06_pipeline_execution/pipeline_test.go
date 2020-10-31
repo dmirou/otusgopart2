@@ -102,11 +102,11 @@ func TestPipeline(t *testing.T) {
 			close(in)
 		}()
 
-		result := make([]string, 0, 10)
+		result := make([]int, 0, 10)
 		for s := range ExecutePipeline(in, nil) {
-			result = append(result, s.(string))
+			result = append(result, s.(int))
 		}
 
-		require.Equal(t, []string{}, result)
+		require.Equal(t, data, result)
 	})
 }
