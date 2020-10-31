@@ -32,7 +32,7 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 // runStage runs stage st with in and done channels
 // and write results into out channel.
 func runStage(in In, done In, st Stage) Out {
-	out := make(Bi)
+	out := make(Bi, 1)
 
 	go func() {
 		defer close(out)
@@ -58,9 +58,13 @@ func runStage(in In, done In, st Stage) Out {
 			}
 
 			select {
-			case v := <-ch:
+			case v, ok := <-ch:
+				if !ok {
+					return
+				}
 				out <- v
-			default:
+			case <-done:
+				return
 			}
 		}
 	}()
