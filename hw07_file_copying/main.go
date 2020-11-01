@@ -54,7 +54,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := Copy(from, to, int64(offset), int64(limit)); err != nil {
+	if err := Copy(from, to, offset, limit); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
