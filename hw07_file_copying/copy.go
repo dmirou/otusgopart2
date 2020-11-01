@@ -82,6 +82,8 @@ func Copy(fromPath string, toPath string, offset, limit int64) error {
 }
 
 // getSizeToCopy returns count of bytes to copy according with offset and limit.
+// It returns ErrUnsupportedFile if file is dir or it has zero size,
+// ErrOffsetExceedsFileSize if offset exceeds file size.
 func getSizeToCopy(srcFile *os.File, offset, limit int64) (int64, error) {
 	info, err := srcFile.Stat()
 	if err != nil {
