@@ -81,6 +81,7 @@ func runStage(in In, done In, st Stage) (out Bi, nextDone Bi) {
 			select {
 			case <-done:
 				close(nextDone)
+
 				return
 			default:
 			}
@@ -93,6 +94,7 @@ func runStage(in In, done In, st Stage) (out Bi, nextDone Bi) {
 				out <- v
 			case <-done:
 				close(nextDone)
+
 				return
 			}
 		}
