@@ -53,7 +53,7 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 // runStage runs stage st with in and done channels
 // and write results into out channel. It returns
 // out channel and nextDone channel which will be closed
-// when after closing done channel.
+// after closing done channel.
 func runStage(in In, done In, st Stage) (out Bi, nextDone Bi) {
 	out = make(Bi)
 
