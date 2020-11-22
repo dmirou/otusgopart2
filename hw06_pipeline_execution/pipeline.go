@@ -66,17 +66,6 @@ func runStage(in In, done In, st Stage) (out Bi, nextDone Bi) {
 
 		ch := st(in)
 
-		if done == nil {
-			for {
-				v, ok := <-ch
-				if !ok {
-					return
-				}
-
-				out <- v
-			}
-		}
-
 		for {
 			select {
 			case <-done:
