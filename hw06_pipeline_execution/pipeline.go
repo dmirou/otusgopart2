@@ -39,12 +39,11 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 	}
 
 	cur := in
-	curDone := done
 
 	for _, stage := range stages {
 		st := stage
 
-		cur, curDone = runStage(cur, curDone, st)
+		cur = runStage(cur, done, st)
 	}
 
 	return cur
@@ -52,14 +51,9 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 
 // runStage runs stage st with in and done channels
 // and write results into out channel. It returns
-// out channel and nextDone channel which will be closed
-// after closing done channel.
-func runStage(in In, done In, st Stage) (out Bi, nextDone Bi) {
+// out channel.
+func runStage(in In, done In, st Stage) (out Bi) {
 	out = make(Bi)
-
-	if done != nil {
-		nextDone = make(Bi)
-	}
 
 	go func() {
 		defer close(out)
@@ -69,8 +63,6 @@ func runStage(in In, done In, st Stage) (out Bi, nextDone Bi) {
 		for {
 			select {
 			case <-done:
-				close(nextDone)
-
 				return
 			default:
 			}
@@ -80,14 +72,19 @@ func runStage(in In, done In, st Stage) (out Bi, nextDone Bi) {
 				if !ok {
 					return
 				}
-				out <- v
-			case <-done:
-				close(nextDone)
 
+				select {
+				case out <- v:
+					break
+				case <-done:
+					return
+				}
+
+			case <-done:
 				return
 			}
 		}
 	}()
 
-	return out, nextDone
+	return out
 }
