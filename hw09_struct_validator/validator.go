@@ -43,11 +43,11 @@ type validator interface {
 	validate(field string, value interface{}) *ValidationError
 }
 
-type LengthValidator struct {
+type lengthValidator struct {
 	Length int
 }
 
-func (lv LengthValidator) validate(field string, value interface{}) *ValidationError {
+func (lv lengthValidator) validate(field string, value interface{}) *ValidationError {
 	str := fmt.Sprintf("%s", value)
 
 	if len(str) != lv.Length {
@@ -60,11 +60,11 @@ func (lv LengthValidator) validate(field string, value interface{}) *ValidationE
 	return nil
 }
 
-type MinValidator struct {
+type minValidator struct {
 	Min int
 }
 
-func (mv MinValidator) validate(field string, value interface{}) *ValidationError {
+func (mv minValidator) validate(field string, value interface{}) *ValidationError {
 	vint, ok := value.(int)
 	if !ok {
 		return &ValidationError{
@@ -83,11 +83,11 @@ func (mv MinValidator) validate(field string, value interface{}) *ValidationErro
 	return nil
 }
 
-type MaxValidator struct {
+type maxValidator struct {
 	Max int
 }
 
-func (mv MaxValidator) validate(field string, value interface{}) *ValidationError {
+func (mv maxValidator) validate(field string, value interface{}) *ValidationError {
 	vint, ok := value.(int)
 	if !ok {
 		return &ValidationError{
@@ -106,11 +106,11 @@ func (mv MaxValidator) validate(field string, value interface{}) *ValidationErro
 	return nil
 }
 
-type InValidator struct {
+type inValidator struct {
 	Items []string
 }
 
-func (iv InValidator) validate(field string, value interface{}) *ValidationError {
+func (iv inValidator) validate(field string, value interface{}) *ValidationError {
 	str := fmt.Sprintf("%v", value)
 
 	for _, item := range iv.Items {
@@ -125,11 +125,11 @@ func (iv InValidator) validate(field string, value interface{}) *ValidationError
 	}
 }
 
-type RegexpValidator struct {
+type regexpValidator struct {
 	Pattern string
 }
 
-func (rv RegexpValidator) validate(field string, value interface{}) *ValidationError {
+func (rv regexpValidator) validate(field string, value interface{}) *ValidationError {
 	str := fmt.Sprintf("%s", value)
 
 	re := regexp.MustCompile(rv.Pattern)
@@ -223,7 +223,7 @@ func createValidator(name, params string) (validator, error) {
 			return nil, err
 		}
 
-		return LengthValidator{
+		return lengthValidator{
 			Length: length,
 		}, nil
 	case "min":
@@ -232,7 +232,7 @@ func createValidator(name, params string) (validator, error) {
 			return nil, err
 		}
 
-		return MinValidator{
+		return minValidator{
 			Min: min,
 		}, nil
 	case "max":
@@ -241,15 +241,15 @@ func createValidator(name, params string) (validator, error) {
 			return nil, err
 		}
 
-		return MaxValidator{
+		return maxValidator{
 			Max: max,
 		}, nil
 	case "in":
-		return InValidator{
+		return inValidator{
 			Items: strings.Split(params, ","),
 		}, nil
 	case "regexp":
-		return RegexpValidator{
+		return regexpValidator{
 			Pattern: params,
 		}, nil
 	default:
